@@ -1,4 +1,6 @@
 language: cpp
 compiler: gcc
-os: linux
+os: 
+ - linux
+ - osx
 script: make

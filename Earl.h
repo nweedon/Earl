@@ -82,7 +82,7 @@ namespace Earl {
 		/**
 		 * Test::initSuite
 		 * -------------------
-		 * Initialise the test suite, clearing all stacked
+		 * Initialise the test suite, clearing all queued
 		 * tests and results.
 		 */
 		static void initSuite();
@@ -118,7 +118,7 @@ namespace Earl {
 		 * Run one component test. Related befores and afters are run in their
 		 * respected positions of the test.
 		 * @param description - Describes the function of the test
-		 * @param lambda - The test to run. If the test runs true, the test is
+		 * @param lambda - The test to run. If the test returns true, the test is
 		 * 					is said to have passed.
 		 */
 		static void it(std::string, std::function<bool()>);
