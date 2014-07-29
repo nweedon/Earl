@@ -49,6 +49,25 @@ namespace Earl {
 	std::mutex Test::stdoutMutex;
 
 	/**
+	 * Test::initSuite
+	 * -------------------
+	 * Initialise the test suite, clearing all stacked
+	 * tests and results.
+	 */
+	void Test::initSuite(void) {
+		// Clear all befores and afters
+		beforeList.clear();
+		beforeEachList.clear();
+		afterList.clear();
+		afterEachList.clear();
+		// Remove all the tests
+		testList.clear();
+		// Initialise the results.
+		testsRun = 0;
+		testsFailed = 0;
+	}
+
+	/**
 	 * Test::describe
 	 * -------------------
 	 * Describe a set of tests to be executed.

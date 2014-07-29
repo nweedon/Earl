@@ -80,6 +80,14 @@ namespace Earl {
 		~Test();
 
 		/**
+		 * Test::initSuite
+		 * -------------------
+		 * Initialise the test suite, clearing all stacked
+		 * tests and results.
+		 */
+		static void initSuite();
+
+		/**
 		 * Test::runTests
 		 * -------------------
 		 * Run all the tests added to the test list with
@@ -163,6 +171,14 @@ namespace Earl {
 		 * Returns the number of tests that failed.
 		 */
 		static int getTestsFailed() { return testsFailed; };
+
+		/**
+		 * Test::getTestsPassed
+		 * -------------------
+		 * Returns the number of tests that passed.
+		 */
+		static int getTestsPassed() { return testsRun - testsFailed; };
+
 		/**
 		 * Test::printSummary
 		 * -------------------
