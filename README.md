@@ -1,5 +1,7 @@
 Earl
 ==================
+[![Build Status](https://travis-ci.org/nweedon/Earl.svg)](https://travis-ci.org/nweedon/Earl)
+
 Earl is a [Mocha](http://visionmedia.github.io/mocha/)-inspired testing framework for C++11, designed to make writing tests as easy as possible. 
 Earl leverages the lambda functionality of C++11 to make tests as readable as possible.
 
