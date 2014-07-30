@@ -44,6 +44,8 @@ namespace Earl {
 	std::vector<std::function<void()>> Test::afterEachList;
 	// The list of tests to be executed.
 	std::vector<TestCase> Test::testList;
+	// Stores the descriptions of pending tests
+	std::vector<std::string> Test::pendingTest;
 
 	// Mutex used for protecting stdout
 	std::mutex Test::stdoutMutex;
@@ -65,6 +67,7 @@ namespace Earl {
 		// Initialise the results.
 		testsRun = 0;
 		testsFailed = 0;
+		pendingTest.clear();
 	}
 
 	/**
@@ -95,6 +98,10 @@ namespace Earl {
 		testList.push_back(test);
 	}
 
+	void Test::it(std::string description){
+		pendingTest.push_back(description);
+	}
+	
 	/**
 	 * Test::runAsynchronously
 	 * -------------------
@@ -179,6 +186,11 @@ namespace Earl {
 		// out of scope.
 		for(auto task : taskList) {
 			task->join();
+		}
+		
+		// print out the pending tests
+		for(auto task : pendingTest) {
+			std::cout << "PEND " << task << std::endl;
 		}
 	}
 
