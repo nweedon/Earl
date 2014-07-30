@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, Niall Frederick Weedon
+ * Copyright (c) 2014, Niall Frederick Weedon and other Contributors
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, 

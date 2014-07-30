@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, Niall Frederick Weedon
+ * Copyright (c) 2014, Niall Frederick Weedon and other Contributors
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, 
@@ -73,7 +73,7 @@ bool runTests(bool async) {
 	// Run the suite of tests and return the
 	// truthiness of the results we expect
 	Test::runTests();
-	return (Test::getTestsPassed() == 3) && (Test::getTestsFailed() == 1) && (Test::getTestsPending()==1);
+	return (Test::getTestsPassed() == 3) && (Test::getTestsFailed() == 1) && (Test::getTestsPending() == 1);
 }
 
 int main() {
