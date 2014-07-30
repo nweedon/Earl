@@ -41,6 +41,8 @@
 #define WHITE "\e[0;37m"
 #define RED "\e[0;31m"
 
+#define TAB "\t"
+
 namespace Earl {
 
 	struct TestCase {
@@ -76,7 +78,7 @@ namespace Earl {
 		 * respected positions of the test.
 		 * @param testCase - The test case which will be run
 		 */
-		static void runTest(TestCase testCase);
+		static void runTest(std::shared_ptr<TestCase> testCase);
 	public:
 		Test();
 		~Test();
@@ -198,6 +200,12 @@ namespace Earl {
 		 */
 		static void printSummary();
 		
+		/**
+		 * Test::getTestsPending
+		 * -------------------
+		 * Returns the number of tests that are 
+		 * pending (are unimplemented)
+		 */
 		static int getTestsPending() { return pendingTest.size(); };
 	};
 

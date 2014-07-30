@@ -64,10 +64,10 @@ namespace Earl {
 		afterEachList.clear();
 		// Remove all the tests
 		testList.clear();
+		pendingTest.clear();
 		// Initialise the results.
 		testsRun = 0;
 		testsFailed = 0;
-		pendingTest.clear();
 	}
 
 	/**
@@ -78,8 +78,8 @@ namespace Earl {
 	 * @param lambda - The function to run, after the description has been printed.
 	 */
 	void Test::describe(std::string description, std::function<void()> lambda) {
-			std::cout << "# " << description << std::endl;
-			lambda();
+		std::cout << "# " << description << std::endl;
+		lambda();
 	}
 
 	/**
@@ -93,12 +93,17 @@ namespace Earl {
 	 */
 	void Test::it(std::string description, std::function<bool()> lambda) {
 		TestCase test { lambda, description, beforeList, afterList };
-		beforeList.clear();
-		afterList.clear();
-		testList.push_back(test);
+
+		if(runAsync) {
+			beforeList.clear();
+			afterList.clear();
+			testList.push_back(test);
+		} else {
+			runTest(std::make_shared<TestCase>(test));
+		}
 	}
 
-	void Test::it(std::string description){
+	void Test::it(std::string description) {
 		pendingTest.push_back(description);
 	}
 	
@@ -119,10 +124,10 @@ namespace Earl {
 	 * respected positions of the test.
 	 * @param testCase - The test case which will be run
 	 */
-	void Test::runTest(TestCase testCase) {
+	void Test::runTest(std::shared_ptr<TestCase> testCase) {
 		// Process before functions. These are removed
 		// after one use.
-		for(auto f : testCase.beforeList) {
+		for(auto f : testCase->beforeList) {
 			f();
 		}
 
@@ -132,11 +137,11 @@ namespace Earl {
 			f();
 		}
 
-		bool passed = testCase.test();
+		bool passed = testCase->test();
 
 		// Process after functions. These are removed
 		// after one use.
-		for(auto f : testCase.afterList) {
+		for(auto f : testCase->afterList) {
 			f();
 		}
 
@@ -155,13 +160,13 @@ namespace Earl {
 		testsRun++;
 
 		if(passed) {
-			std::cout << GREEN << "PASS " << WHITE << std::flush;
+			std::cout << TAB << GREEN << "PASS " << WHITE << std::flush;
 		} else {
-			std::cout << RED << "FAIL " << WHITE << std::flush;
+			std::cout << TAB << RED << "FAIL " << WHITE << std::flush;
 			testsFailed++;
 		}
 
-		std::cout << testCase.description << std::endl;
+		std::cout << testCase->description << std::endl;
 	}
 
 	/**
@@ -171,26 +176,30 @@ namespace Earl {
 	 * the Test::it function.
 	 */
 	void Test::runTests() {
-		std::vector<std::shared_ptr<std::thread>> taskList;
+		if(runAsync) {
+			std::vector<std::shared_ptr<std::thread>> taskList;
+			std::shared_ptr<TestCase> testPtr;
 
-		for(auto test : testList) {
-			if(runAsync) {
-				taskList.push_back(std::make_shared<std::thread>(runTest, test));
-			} else {
-				runTest(test);
-			}			
-		}
+			for(auto test : testList) {
+				testPtr = std::make_shared<TestCase>(test);
+				if(runAsync) {
+					taskList.push_back(std::make_shared<std::thread>(runTest, testPtr));
+				} else {
+					runTest(testPtr);
+				}			
+			}
 
-		// Wait for all tasks to complete. The thread
-		// shared_ptr will delete itself after it goes
-		// out of scope.
-		for(auto task : taskList) {
-			task->join();
+			// Wait for all tasks to complete. The thread
+			// shared_ptr will delete itself after it goes
+			// out of scope.
+			for(auto task : taskList) {
+				task->join();
+			}
 		}
 		
 		// print out the pending tests
 		for(auto task : pendingTest) {
-			std::cout << "PEND " << task << std::endl;
+			std::cout << TAB << "PEND " << task << std::endl;
 		}
 	}
 
@@ -254,6 +263,6 @@ namespace Earl {
 		std::cout << std::endl;
 		std::cout << "Summary: " << std::endl;
 		std::cout << "---------------" << std::endl;
-		std::cout << testsRun << " tests run, " << (testsRun - testsFailed) << " tests passed." << std::endl;
+		std::cout << testsRun << " tests run, " << (testsRun - testsFailed) << " tests passed. (" << getTestsPending() << " tests pending.)" << std::endl;
 	}
 }
