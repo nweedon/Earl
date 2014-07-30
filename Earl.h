@@ -63,6 +63,8 @@ namespace Earl {
 		static std::vector<std::function<void()>> afterList;
 		// The list of tests to be executed.
 		static std::vector<TestCase> testList;
+		// Stores the descriptions of pending tests
+		static std::vector<std::string> pendingTest;
 
 		// Mutex used for protecting stdout
 		static std::mutex stdoutMutex;
@@ -122,6 +124,15 @@ namespace Earl {
 		 * 					is said to have passed.
 		 */
 		static void it(std::string, std::function<bool()>);
+		
+		/**
+		 * Test::it
+		 * -------------------
+		 * Run one component test(used for pending tests). Related befores and afters are run in their
+		 * respected positions of the test.
+		 * @param description - Describes the function of the test
+		 */
+		static void it(std::string);
 
 		/**
 		 * Test::beforeEach
@@ -186,6 +197,8 @@ namespace Earl {
 		 * have been run.
 		 */
 		static void printSummary();
+		
+		static int getTestsPending() { return pendingTest.size(); };
 	};
 
 };

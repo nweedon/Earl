@@ -66,13 +66,14 @@ bool runTests(bool async) {
 			std::this_thread::sleep_for(std::chrono::seconds(5));
 			return true;
 		});
-
+		
+		Test::it("Should store a pending test");
 	});
 
 	// Run the suite of tests and return the
 	// truthiness of the results we expect
 	Test::runTests();
-	return (Test::getTestsPassed() == 3) && (Test::getTestsFailed() == 1);
+	return (Test::getTestsPassed() == 3) && (Test::getTestsFailed() == 1) && (Test::getTestsPending()==1);
 }
 
 int main() {
