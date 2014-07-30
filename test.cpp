@@ -34,9 +34,9 @@
 
 using namespace Earl;
 
-bool runTests(bool async) {
+bool runTests(bool async, int threads) {
 	if(async) {
-		std::cout << "Running suite in asynchronous mode." << std::endl;
+		std::cout << "Running suite in asynchronous mode. (" << threads << " threads)" << std::endl;
 	} else {
 		std::cout << "Running suite in synchronous mode." << std::endl;
 	}
@@ -44,6 +44,7 @@ bool runTests(bool async) {
 	// Clear the suite of any previous tests.
 	Test::initSuite();
 	Test::runAsynchronously(async);
+	Test::setMaxConcurrency(threads);
 
 	// Run a suite of output tests (make sure
 	// Earl returns what we expect)
@@ -77,5 +78,10 @@ bool runTests(bool async) {
 }
 
 int main() {
-	return (runTests(false) && runTests(true)) ? 0 : 1;
+	bool passed = runTests(false, 1);
+	passed &= runTests(true, -1);
+	passed &= runTests(true, 2);
+	passed &= runTests(true, 4);
+
+	return passed ? 0 : 1;
 }

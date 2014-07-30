@@ -43,6 +43,8 @@
 
 #define TAB "\t"
 
+#define DEFAULT_MAX_THREADS 2
+
 namespace Earl {
 
 	struct TestCase {
@@ -53,7 +55,7 @@ namespace Earl {
 
 	class Test {
 	private:
-		static int testsFailed, testsRun;
+		static int testsFailed, testsRun, maxThreads;
 		static bool runAsync;
 		// The list of functions run before each test.
 		static std::vector<std::function<void()>> beforeEachList;
@@ -207,6 +209,18 @@ namespace Earl {
 		 * pending (are unimplemented)
 		 */
 		static int getTestsPending() { return pendingTest.size(); };
+
+		/**
+		 * Test::setMaxConcurrency
+		 * -------------------
+		 * Affects the number of threads that can be
+		 * launched in asynchronous mode. Setting threadCount
+		 * to a number less than zero means there is no limit
+		 * to the number of threads that can be launched.
+		 * @param threadCount - The maximum number of threads to use
+		 *						whilst running tests.
+		 */
+		static void setMaxConcurrency(int);
 	};
 
 };

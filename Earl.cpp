@@ -32,6 +32,7 @@
 namespace Earl {
 	int Test::testsRun = 0;
 	int Test::testsFailed = 0;
+	int Test::maxThreads = DEFAULT_MAX_THREADS;
 	bool Test::runAsync = false;
 
 	// The list of functions run before the next test.
@@ -179,22 +180,34 @@ namespace Earl {
 		if(runAsync) {
 			std::vector<std::shared_ptr<std::thread>> taskList;
 			std::shared_ptr<TestCase> testPtr;
+			int i = 0;
+			auto waitOnThreads = [](std::vector<std::shared_ptr<std::thread>>* tl) {
+				// Wait for all remaining tasks to complete. The thread
+				// shared_ptr will delete itself after it goes
+				// out of scope.
+				if(tl != nullptr) {
+					for(auto task : *tl) {
+						task->join();
+					}
+
+					// Clear the task list, as all threads
+					// it contains have terminated.
+					tl->clear();
+				}
+			};
 
 			for(auto test : testList) {
+				if(i == maxThreads) {
+					waitOnThreads(&taskList);
+					i = 0;
+				}
+
 				testPtr = std::make_shared<TestCase>(test);
-				if(runAsync) {
-					taskList.push_back(std::make_shared<std::thread>(runTest, testPtr));
-				} else {
-					runTest(testPtr);
-				}			
+				taskList.push_back(std::make_shared<std::thread>(runTest, testPtr));
+				i++;
 			}
 
-			// Wait for all tasks to complete. The thread
-			// shared_ptr will delete itself after it goes
-			// out of scope.
-			for(auto task : taskList) {
-				task->join();
-			}
+			waitOnThreads(&taskList);
 		}
 		
 		// print out the pending tests
@@ -264,5 +277,19 @@ namespace Earl {
 		std::cout << "Summary: " << std::endl;
 		std::cout << "---------------" << std::endl;
 		std::cout << testsRun << " tests run, " << (testsRun - testsFailed) << " tests passed. (" << getTestsPending() << " tests pending.)" << std::endl;
+	}
+
+	/**
+	 * Test::setMaxConcurrency
+	 * -------------------
+	 * Affects the number of threads that can be
+	 * launched in asynchronous mode. Setting threadCount
+	 * to a number less than zero means there is no limit
+	 * to the number of threads that can be launched.
+	 * @param threadCount - The maximum number of threads to use
+	 *						whilst running tests.
+	 */
+	void Test::setMaxConcurrency(int threadCount) {
+		maxThreads = threadCount;
 	}
 }
