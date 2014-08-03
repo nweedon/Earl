@@ -4,6 +4,7 @@ compiler:
  - clang
 # Courtesy of http://stackoverflow.com/questions/22111549/travis-ci-with-clang-3-4-and-c11
 before_install:
+ - pwd
  - if [ "$CXX" == "clang++" ]; then sudo add-apt-repository -y ppa:h-rayflood/llvm; fi
  - sudo apt-get update -qq
 install:
@@ -15,8 +16,10 @@ install:
  - if [ "$CXX" == "clang++" ]; then sudo mkdir /usr/include/c++/v1; fi
  - if [ "$CXX" == "clang++" ]; then cd .. && sudo cp -r include/* /usr/include/c++/v1/; fi
  - if [ "$CXX" == "clang++" ]; then cd /usr/lib && sudo ln -sf libc++.so.1.0 libc++.so; fi
- - if [ "$CXX" == "clang++" ]; then sudo ln -sf libc++.so.1.0 libc++.so.1 && cd $cwd; fi
- - if [ "$CXX" == "clang++" ]; then export CXX="clang++-3.4"; fi
+ - if [ "$CXX" == "clang++" ]; then sudo ln -sf libc++.so.1.0 libc++.so.1 && cd $cwd && pwd; fi
+ - if [ "$CXX" == "clang++" ]; then export CXX="clang++"; fi
+ - if [ "$CXX" == "clang++" ]; then export CXXFLAGS=""; fi
+ - if [ "$CXX" == "clang++" ]; then cd nweedon/Earl; fi
 os: 
  - linux
  - osx
