@@ -14,7 +14,7 @@ build:
 ifeq ($(CXX),g++)
 	@$(CXX) -c -fPIC -std=c++0x Earl.cpp -Wall -lpthread -o $(BUILDDIR)/Earl.o
 else
-	@$(CXX) -fPIC -std=c++11 -stdlib=libc++ Earl.cpp -Wall -I -pthread -o $(BUILDDIR)/Earl.o -v
+	@$(CXX) -fPIC -std=c++11 -stdlib=libstdc++ Earl.cpp -Wall -pthread -o $(BUILDDIR)/Earl.o -v
 endif
 	
 	@$(CXX) $(BUILDDIR)/Earl.o -shared -o $(BUILDDIR)/libEarl_$(EARL_MAJOR)_$(EARL_MINOR)_$(EARL_REVISION).so
@@ -24,7 +24,7 @@ endif
 ifeq ($(CXX),g++)
 	@$(CXX) -std=c++0x *.cpp -Wall -lpthread -o$(BUILDDIR)/test-Earl
 else
-	@$(CXX) -std=c++11 -stdlib=libc++ *.cpp -Wall -pthread -o$(BUILDDIR)/test-Earl
+	@$(CXX) -std=c++11 -stdlib=libstdc++ *.cpp -Wall -pthread -o$(BUILDDIR)/test-Earl
 endif
 
 	@echo '> Complete!'
