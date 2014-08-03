@@ -19,7 +19,7 @@ install:
  - if [ "$CXX" == "clang++" ]; then sudo ln -sf libc++.so.1.0 libc++.so.1 && cd $cwd && pwd; fi
  - if [ "$CXX" == "clang++" ]; then export CXX="clang++"; fi
  - if [ "$CXX" == "clang++" ]; then export CXXFLAGS=""; fi
- - if [ "$CXX" == "clang++" ]; then cd nweedon/Earl; fi
+ - if [ "$CXX" == "clang++" ]; then cd build/nweedon/Earl; fi
 os: 
  - linux
  - osx
