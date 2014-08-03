@@ -38,9 +38,19 @@
 #include <iostream>
 #include <vector>
 
-#define GREEN "\e[0;32m"
-#define WHITE "\e[0;37m"
-#define RED "\e[0;31m"
+#ifndef _MSC_VER
+	#define ANSI_COLORS
+#endif
+
+#ifndef ANSI_COLORS
+	#define GREEN ""
+	#define WHITE ""
+	#define RED ""
+#else
+	#define GREEN "\e[0;32m"
+	#define WHITE "\e[0;37m"
+	#define RED "\e[0;31m"
+#endif
 
 #define TAB "\t"
 

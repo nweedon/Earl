@@ -11,6 +11,7 @@ Earl leverages the lambda functionality of C++11 to make tests as readable as po
 ####Compiler Compatibility (Manually Tested)
 * __Ubuntu:__ g++ 4.6.3, clang++ 3.4 (requires libc++)
 * __Windows (Cygwin):__ g++ 4.8.3
+* __Windows:__ Visual Studio 2012 Version 11.0.60315.01 Update 2
 
 ####Example
 ```

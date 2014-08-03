@@ -93,7 +93,15 @@ namespace Earl {
 	 * 					is said to have passed.
 	 */
 	void Test::it(std::string description, std::function<bool()> lambda) {
+#ifdef _MSC_VER
+		TestCase test;
+		test.test = lambda;
+		test.description = description;
+		test.beforeList = beforeList;
+		test.afterList = afterList;
+#else
 		TestCase test { lambda, description, beforeList, afterList };
+#endif
 
 		if(runAsync) {
 			beforeList.clear();
