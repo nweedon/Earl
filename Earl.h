@@ -29,6 +29,7 @@
  *******************************************************************************/ 
 #pragma once
 
+#include <chrono>
 #include <functional>
 #include <future>
 #include <memory>

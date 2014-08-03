@@ -6,10 +6,10 @@ Earl is a [Mocha](http://visionmedia.github.io/mocha/)-inspired testing framewor
 Earl leverages the lambda functionality of C++11 to make tests as readable as possible.
 
 ####Compiler Compatibility (Automatically Tested)
-* __Linux on Travis-CI:__ g++ 4.6
+* __Linux on Travis-CI:__ g++ 4.6, clang++ 3.4 (requires libc++)
 
 ####Compiler Compatibility (Manually Tested)
-* __Ubuntu:__ g++ 4.6.3
+* __Ubuntu:__ g++ 4.6.3, clang++ 3.4 (requires libc++)
 * __Windows (Cygwin):__ g++ 4.8.3
 
 ####Example
