@@ -29,9 +29,25 @@
  *******************************************************************************/ 
 #pragma once
 
+#include <string>
+#include <iostream>
+#include <mutex>
+
+#ifdef _MSC_VER
+ 	#define GREY ""
+ 	#define WHITE ""
+#else
+ 	#define GREY "\e[1;30m"
+ 	#define WHITE "\e[0;37m"
+#endif
+
+#define ASSERT_OUTPUT "\tassert => "
+
 namespace Earl {
 	class Assert {
 		private:
+			// Mutex used for protecting stdout
+			static std::mutex stdoutMutex;
 		public:
 			static bool isTruthy(bool);
 			static bool isTruthy(bool, std::string);
@@ -48,4 +64,63 @@ namespace Earl {
 			template< typename T>
 			static bool isEqualDeep(T*, T*, std::string);
 	};
+
+	/**
+	 * Assert::isEqual
+	 * -------------------
+	 * Compare whether the two pointer values are equal.
+	 * @param first - First value to compare
+	 * @param second - Second value to compare
+	 */
+	template <typename T>
+	bool Assert::isEqual(T* first, T* second) {
+		return first == second;
+	}
+
+	/**
+	 * Assert::isEqual
+	 * -------------------
+	 * Compare whether the two pointer values are equal,
+	 * adding a comment to the assertion.
+	 * @param first - First value to compare
+	 * @param second - Second value to compare
+	 * @param outputMessage - The comment to print when making the assertion
+	 */
+	template <typename T>
+	bool Assert::isEqual(T* first, T* second, std::string outputMessage) {
+		std::lock_guard<std::mutex> g_stdout(stdoutMutex);
+		std::cout << GREY << ASSERT_OUTPUT << outputMessage << std::endl;
+		return isEqual(first, second);
+	};
+
+	/**
+	 * Assert::isEqualDeep
+	 * -------------------
+	 * Compare whether the two pointed-to data values are equal.
+	 * @param first - First value to compare
+	 * @param second - Second value to compare
+	 */
+	template <typename T>
+	bool Assert::isEqualDeep(T* first, T* second) {
+		if(first && second) {
+			return *first == *second;
+		}
+		return false;
+	}
+
+	/**
+	 * Assert::isEqualDeep
+	 * -------------------
+	 * Compare whether the two pointed-to data values are equal,
+	 * adding a comment to the assertion.
+	 * @param first - First value to compare
+	 * @param second - Second value to compare
+	 * @param outputMessage - The comment to print when making the assertion
+	 */
+	template <typename T>
+	bool Assert::isEqualDeep(T* first, T* second, std::string outputMessage) {
+		std::lock_guard<std::mutex> g_stdout(stdoutMutex);
+		std::cout << GREY << ASSERT_OUTPUT << outputMessage << std::endl;
+		return isEqualDeep(first, second);
+	}
 }
