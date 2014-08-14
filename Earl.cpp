@@ -34,6 +34,7 @@ namespace Earl {
 	int Test::testsFailed = 0;
 	int Test::maxThreads = DEFAULT_MAX_THREADS;
 	bool Test::runAsync = false;
+	std::string Test::currentSuite = "";
 
 	// The list of functions run before the next test.
 	std::vector<std::function<void()>> Test::beforeList;
@@ -46,7 +47,7 @@ namespace Earl {
 	// The list of tests to be executed.
 	std::vector<TestCase> Test::testList;
 	// Stores the descriptions of pending tests
-	std::vector<std::string> Test::pendingTest;
+	std::vector<PendingTestCase> Test::pendingTest;
 
 	// Mutex used for protecting stdout
 	std::mutex Test::stdoutMutex;
@@ -69,6 +70,7 @@ namespace Earl {
 		// Initialise the results.
 		testsRun = 0;
 		testsFailed = 0;
+		currentSuite = "";
 	}
 
 	/**
@@ -79,7 +81,11 @@ namespace Earl {
 	 * @param lambda - The function to run, after the description has been printed.
 	 */
 	void Test::describe(std::string description, std::function<void()> lambda) {
-		std::cout << "# " << description << std::endl;
+		if(!runAsync) {
+			std::cout << "# " << description << std::endl;
+		}
+		
+		currentSuite = description;
 		lambda();
 	}
 
@@ -93,7 +99,16 @@ namespace Earl {
 	 * 					is said to have passed.
 	 */
 	void Test::it(std::string description, std::function<bool()> lambda) {
-		TestCase test { lambda, description, beforeList, afterList };
+#ifdef _MSC_VER
+		TestCase test;
+		test.test = lambda;
+		test.description = description;
+		test.suite = currentSuite;
+		test.beforeList = beforeList;
+		test.afterList = afterList;
+#else
+		TestCase test { lambda, description, currentSuite, beforeList, afterList };
+#endif
 
 		if(runAsync) {
 			beforeList.clear();
@@ -105,7 +120,14 @@ namespace Earl {
 	}
 
 	void Test::it(std::string description) {
-		pendingTest.push_back(description);
+#ifdef _MSC_VER
+		PendingTestCase test;
+		test.description = description;
+		test.suite = suite;
+#else
+		PendingTestCase test { description, currentSuite };
+#endif
+		pendingTest.push_back(test);
 	}
 	
 	/**
@@ -197,9 +219,17 @@ namespace Earl {
 			};
 
 			for(auto test : testList) {
-				if(i == maxThreads) {
+				// Only run one suite at a time - even concurrently
+				if(i == maxThreads || test.suite != currentSuite) {				
 					waitOnThreads(&taskList);
 					i = 0;
+
+					// If the suite has changed, print out the new
+					// suite name before running the next suite of tests
+					if(test.suite != currentSuite) {
+						std::cout << "# " << test.suite << std::endl;
+						currentSuite = test.suite;
+					}
 				}
 
 				testPtr = std::make_shared<TestCase>(test);
@@ -211,8 +241,10 @@ namespace Earl {
 		}
 		
 		// print out the pending tests
+		std::cout << "@ Pending Tests" << std::endl;
+
 		for(auto task : pendingTest) {
-			std::cout << TAB << "PEND " << task << std::endl;
+			std::cout << TAB << "(" << task.suite << ") " << task.description << std::endl;
 		}
 	}
 

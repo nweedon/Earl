@@ -37,10 +37,21 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include "EarlAssert.h"
 
-#define GREEN "\e[0;32m"
-#define WHITE "\e[0;37m"
-#define RED "\e[0;31m"
+#ifndef _MSC_VER
+	#define ANSI_COLORS
+#endif
+
+#ifndef ANSI_COLORS
+	#define GREEN ""
+	#define WHITE ""
+	#define RED ""
+#else
+	#define GREEN "\e[0;32m"
+	#define WHITE "\e[0;37m"
+	#define RED "\e[0;31m"
+#endif
 
 #define TAB "\t"
 
@@ -51,13 +62,20 @@ namespace Earl {
 	struct TestCase {
 		std::function<bool()> test;
 		std::string description;
+		std::string suite;
 		std::vector<std::function<void()>> beforeList, afterList;
+	};
+
+	struct PendingTestCase {
+		std::string description;
+		std::string suite;
 	};
 
 	class Test {
 	private:
 		static int testsFailed, testsRun, maxThreads;
 		static bool runAsync;
+		static std::string currentSuite;
 		// The list of functions run before each test.
 		static std::vector<std::function<void()>> beforeEachList;
 		// The list of functions run before the next test.
@@ -69,7 +87,7 @@ namespace Earl {
 		// The list of tests to be executed.
 		static std::vector<TestCase> testList;
 		// Stores the descriptions of pending tests
-		static std::vector<std::string> pendingTest;
+		static std::vector<PendingTestCase> pendingTest;
 
 		// Mutex used for protecting stdout
 		static std::mutex stdoutMutex;
