@@ -51,7 +51,7 @@ namespace Earl {
 	 * @param outputMessage - The comment to be printed to stdout.
 	 */
 	bool Assert::isTruthy(bool truthiness, std::string outputMessage) {
-		//std::lock_guard<std::mutex> g_stdout(stdoutMutex);
+		std::lock_guard<std::mutex> g_stdout(stdoutMutex);
 		std::cout << GREY << ASSERT_OUTPUT << outputMessage << WHITE << std::endl;
 		return isTruthy(truthiness);
 	}
