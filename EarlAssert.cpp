@@ -30,8 +30,6 @@
 #include "EarlAssert.h"
 
 namespace Earl {
-	std::mutex Assert::stdoutMutex;
-
 	/**
 	 * Assert::isTruthy
 	 * -------------------

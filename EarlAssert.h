@@ -46,9 +46,6 @@
 
 namespace Earl {
 	class Assert {
-		private:
-			// Mutex used for protecting stdout
-			static std::mutex stdoutMutex;
 		public:
 			static bool isTruthy(bool);
 			static bool isTruthy(bool, std::string);

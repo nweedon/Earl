@@ -15,6 +15,7 @@ ifeq ($(CXX),g++)
 	@mv *.o $(BUILDDIR)
 else
 	@$(CXX) -c Earl.cpp EarlAssert.cpp EarlPrint.cpp -fPIC -std=c++11 -stdlib=libc++ -pthread -Wall
+	@mv *.o $(BUILDDIR)
 endif
 	
 	@$(CXX) $(BUILDDIR)/*.o -shared -o $(BUILDDIR)/libEarl.so.$(EARL_MAJOR).$(EARL_MINOR)

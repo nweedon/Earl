@@ -49,8 +49,7 @@ namespace Earl {
 	// Stores the descriptions of pending tests
 	std::vector<PendingTestCase> Test::pendingTest;
 
-	// Mutex used for protecting stdout
-	std::mutex Test::stdoutMutex;
+	std::mutex Test::testCountMutex;
 
 	/**
 	 * Test::initSuite
@@ -174,11 +173,9 @@ namespace Earl {
 			f();
 		}
 		
-		// Mutex will be unlocked when the lock
-		// guard goes out of scope. The mutex also
-		// implicitly guards Test::testsRun and
+		// Guard Test::testsRun and
 		// Test::testsFailed
-		std::lock_guard<std::mutex> g_stdout(stdoutMutex);
+		std::lock_guard<std::mutex> g_stdout(testCountMutex);
 
 		testsRun++;
 

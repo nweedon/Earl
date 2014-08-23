@@ -91,7 +91,7 @@ namespace Earl {
 		static std::vector<PendingTestCase> pendingTest;
 
 		// Mutex used for protecting stdout
-		static std::mutex stdoutMutex;
+		static std::mutex testCountMutex;
 
 		/**
 		 * Test::runTest
