@@ -82,7 +82,7 @@ namespace Earl {
 	 */
 	void Test::describe(std::string description, std::function<void()> lambda) {
 		if(!runAsync) {
-			std::cout << "# " << description << std::endl;
+			Print::line("# " + description);
 		}
 		
 		currentSuite = description;
@@ -183,9 +183,9 @@ namespace Earl {
 		testsRun++;
 
 		if(passed) {
-			std::cout << TAB << GREEN << "PASS " << WHITE << std::flush;
+			Print::fragment(TAB + "PASS ", GREEN);
 		} else {
-			std::cout << TAB << RED << "FAIL " << WHITE << std::flush;
+			Print::fragment(TAB + "FAIL ", RED);
 			testsFailed++;
 		}
 
@@ -227,7 +227,7 @@ namespace Earl {
 					// If the suite has changed, print out the new
 					// suite name before running the next suite of tests
 					if(test.suite != currentSuite) {
-						std::cout << "# " << test.suite << std::endl;
+						Print::line("# " + test.suite);
 						currentSuite = test.suite;
 					}
 				}
@@ -241,10 +241,10 @@ namespace Earl {
 		}
 		
 		// print out the pending tests
-		std::cout << "@ Pending Tests" << std::endl;
+		Print::line("@ Pending Tests");
 
 		for(auto task : pendingTest) {
-			std::cout << TAB << "(" << task.suite << ") " << task.description << std::endl;
+			Print::line(TAB + "(" + task.suite + ") " + task.description);
 		}
 	}
 

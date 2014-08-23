@@ -26,56 +26,28 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************/ 
-#include "EarlAssert.h"
+ *******************************************************************************/
+#pragma once
+
+#include <string>
+#include <iostream>
+#include <mutex>
+
+#ifdef _MSC_VER
+ 	#define WHITE ""
+#else
+ 	#define WHITE "\e[0;37m"
+#endif
 
 namespace Earl {
-	std::mutex Assert::stdoutMutex;
-
-	/**
-	 * Assert::isTruthy
-	 * -------------------
-	 * Return whether the passed argument is true.
-	 * @param truthiness - Deteremines whether the return value is true.
-	 */
-	bool Assert::isTruthy(bool truthiness) {
-		return truthiness;
-	}
-
-	/**
-	 * Assert::isTruthy
-	 * -------------------
-	 * Return whether the passed argument is true, adding
-	 * a comment to the assertion.
-	 * @param truthiness - Deteremines whether the return value is true.
-	 * @param outputMessage - The comment to be printed to stdout.
-	 */
-	bool Assert::isTruthy(bool truthiness, std::string outputMessage) {
-		Print::line(ASSERT_OUTPUT + outputMessage, GREY);
-		return isTruthy(truthiness);
-	}
-
-	/**
-	 * Assert::isFalsy
-	 * -------------------
-	 * Return whether the passed argument is false.
-	 * @param falsiness - Deteremines whether the return value is false.
-	 */
-	bool Assert::isFalsy(bool falsiness) {
-		return !falsiness;
-	}
-
-	/**
-	 * Assert::isFalsy
-	 * -------------------
-	 * Return whether the passed argument is false, adding
-	 * a comment to the assertion.
-	 * @param falsiness - Deteremines whether the return value is false.
-	 * @param outputMessage - The comment to be printed to stdout.
-	 */
-	bool Assert::isFalsy(bool falsiness, std::string outputMessage) {
-		Print::line(ASSERT_OUTPUT + outputMessage, GREY);
-		return isFalsy(falsiness);
-	}
-
+	class Print {
+	private:
+		static std::mutex stdoutMutex;
+		static void base(std::string s, std::string colour = WHITE, bool flush = false);
+	public:
+		Print() { };
+		~Print() { };
+		static void line(std::string s, std::string colour = WHITE);
+		static void fragment(std::string s, std::string colour = WHITE);
+	};
 };

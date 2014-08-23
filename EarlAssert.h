@@ -32,6 +32,7 @@
 #include <string>
 #include <iostream>
 #include <mutex>
+#include "EarlPrint.h"
 
 #ifdef _MSC_VER
  	#define GREY ""
@@ -88,8 +89,7 @@ namespace Earl {
 	 */
 	template <typename T>
 	bool Assert::isEqual(T* first, T* second, std::string outputMessage) {
-		std::lock_guard<std::mutex> g_stdout(stdoutMutex);
-		std::cout << GREY << ASSERT_OUTPUT << outputMessage << std::endl;
+		Print::line(ASSERT_OUTPUT + outputMessage, GREY);
 		return isEqual(first, second);
 	};
 
@@ -119,8 +119,7 @@ namespace Earl {
 	 */
 	template <typename T>
 	bool Assert::isEqualDeep(T* first, T* second, std::string outputMessage) {
-		std::lock_guard<std::mutex> g_stdout(stdoutMutex);
-		std::cout << GREY << ASSERT_OUTPUT << outputMessage << std::endl;
+		Print::line(ASSERT_OUTPUT + outputMessage, GREY);
 		return isEqualDeep(first, second);
 	}
 }

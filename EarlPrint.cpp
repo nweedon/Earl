@@ -26,56 +26,28 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************/ 
-#include "EarlAssert.h"
+ *******************************************************************************/
+#include "EarlPrint.h"
 
 namespace Earl {
-	std::mutex Assert::stdoutMutex;
+	std::mutex Print::stdoutMutex;
 
-	/**
-	 * Assert::isTruthy
-	 * -------------------
-	 * Return whether the passed argument is true.
-	 * @param truthiness - Deteremines whether the return value is true.
-	 */
-	bool Assert::isTruthy(bool truthiness) {
-		return truthiness;
+	void Print::base(std::string s, std::string colour, bool flush) {
+		std::lock_guard<std::mutex> g_stdout(stdoutMutex);
+		std::cout << colour << s << WHITE;
+
+		if(flush) {
+			std::cout << std::flush;
+		} else {
+			std::cout << std::endl;
+		}
 	}
 
-	/**
-	 * Assert::isTruthy
-	 * -------------------
-	 * Return whether the passed argument is true, adding
-	 * a comment to the assertion.
-	 * @param truthiness - Deteremines whether the return value is true.
-	 * @param outputMessage - The comment to be printed to stdout.
-	 */
-	bool Assert::isTruthy(bool truthiness, std::string outputMessage) {
-		Print::line(ASSERT_OUTPUT + outputMessage, GREY);
-		return isTruthy(truthiness);
+	void Print::line(std::string s, std::string colour) {
+		base(s, colour, false);
 	}
 
-	/**
-	 * Assert::isFalsy
-	 * -------------------
-	 * Return whether the passed argument is false.
-	 * @param falsiness - Deteremines whether the return value is false.
-	 */
-	bool Assert::isFalsy(bool falsiness) {
-		return !falsiness;
+	void Print::fragment(std::string s, std::string colour) {
+		base(s, colour, true);
 	}
-
-	/**
-	 * Assert::isFalsy
-	 * -------------------
-	 * Return whether the passed argument is false, adding
-	 * a comment to the assertion.
-	 * @param falsiness - Deteremines whether the return value is false.
-	 * @param outputMessage - The comment to be printed to stdout.
-	 */
-	bool Assert::isFalsy(bool falsiness, std::string outputMessage) {
-		Print::line(ASSERT_OUTPUT + outputMessage, GREY);
-		return isFalsy(falsiness);
-	}
-
 };

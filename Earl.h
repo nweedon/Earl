@@ -37,6 +37,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include "EarlPrint.h"
 #include "EarlAssert.h"
 
 #ifndef _MSC_VER
@@ -53,7 +54,7 @@
 	#define RED "\e[0;31m"
 #endif
 
-#define TAB "\t"
+#define TAB std::string("\t")
 
 #define DEFAULT_MAX_THREADS 2
 
