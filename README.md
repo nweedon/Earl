@@ -1,6 +1,7 @@
 Earl
 ==================
-[![Build Status](https://travis-ci.org/nweedon/Earl.svg)](https://travis-ci.org/nweedon/Earl)
+* __Master:__ [![Build Status](https://travis-ci.org/nweedon/Earl.svg?branch=master)](https://travis-ci.org/nweedon/Earl)
+* __Dev:__ [![Build Status](https://travis-ci.org/nweedon/Earl.svg?branch=dev)](https://travis-ci.org/nweedon/Earl)
 
 Earl is a [Mocha](http://visionmedia.github.io/mocha/)-inspired testing framework for C++11, designed to make writing tests as easy as possible. 
 Earl leverages the lambda functionality of C++11 to make tests as readable as possible.
@@ -22,9 +23,6 @@ Test::describe("Example", []() {
 		return (0 == 0);
 	});
 });
-
-// Run the suite of tests
-Test::runTests();
 ```
 
 For API information and more examples, please view the wiki!
