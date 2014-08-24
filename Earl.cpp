@@ -49,8 +49,7 @@ namespace Earl {
 	// Stores the descriptions of pending tests
 	std::vector<PendingTestCase> Test::pendingTest;
 
-	// Mutex used for protecting stdout
-	std::mutex Test::stdoutMutex;
+	std::mutex Test::testCountMutex;
 
 	/**
 	 * Test::initSuite
@@ -82,7 +81,7 @@ namespace Earl {
 	 */
 	void Test::describe(std::string description, std::function<void()> lambda) {
 		if(!runAsync) {
-			std::cout << "# " << description << std::endl;
+			Print::line("# " + description);
 		}
 		
 		currentSuite = description;
@@ -174,18 +173,16 @@ namespace Earl {
 			f();
 		}
 		
-		// Mutex will be unlocked when the lock
-		// guard goes out of scope. The mutex also
-		// implicitly guards Test::testsRun and
+		// Guard Test::testsRun and
 		// Test::testsFailed
-		std::lock_guard<std::mutex> g_stdout(stdoutMutex);
+		std::lock_guard<std::mutex> g_stdout(testCountMutex);
 
 		testsRun++;
 
 		if(passed) {
-			std::cout << TAB << GREEN << "PASS " << WHITE << std::flush;
+			Print::fragment(TAB + "PASS ", GREEN);
 		} else {
-			std::cout << TAB << RED << "FAIL " << WHITE << std::flush;
+			Print::fragment(TAB + "FAIL ", RED);
 			testsFailed++;
 		}
 
@@ -227,7 +224,7 @@ namespace Earl {
 					// If the suite has changed, print out the new
 					// suite name before running the next suite of tests
 					if(test.suite != currentSuite) {
-						std::cout << "# " << test.suite << std::endl;
+						Print::line("# " + test.suite);
 						currentSuite = test.suite;
 					}
 				}
@@ -241,10 +238,10 @@ namespace Earl {
 		}
 		
 		// print out the pending tests
-		std::cout << "@ Pending Tests" << std::endl;
+		Print::line("@ Pending Tests");
 
 		for(auto task : pendingTest) {
-			std::cout << TAB << "(" << task.suite << ") " << task.description << std::endl;
+			Print::line(TAB + "(" + task.suite + ") " + task.description);
 		}
 	}
 
