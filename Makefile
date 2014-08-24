@@ -1,6 +1,8 @@
 BUILDDIR=./build
 EARL_MAJOR=1
 EARL_MINOR=0
+SRC=Earl.cpp EarlAssert.cpp EarlPrint.cpp
+LIB_OUT=$(BUILDDIR)/libEarl.so.$(EARL_MAJOR).$(EARL_MINOR)
 
 all: clean build test
 
@@ -8,27 +10,29 @@ all: clean build test
 
 build:
 	@mkdir $(BUILDDIR)
-	@echo '> Building library...'
 
+# > Build library
+# Compile object files
 ifeq ($(CXX),g++)
-	@$(CXX) -c Earl.cpp EarlAssert.cpp EarlPrint.cpp -fPIC -std=c++0x -Wall -lpthread 
-	@mv *.o $(BUILDDIR)
+	@$(CXX) -c $(SRC) -fPIC -std=c++0x -Wall -lpthread
 else
-	@$(CXX) -c Earl.cpp EarlAssert.cpp EarlPrint.cpp -fPIC -std=c++11 -stdlib=libc++ -pthread -Wall
-	@mv *.o $(BUILDDIR)
+	@$(CXX) -c $(SRC) -fPIC -std=c++11 -stdlib=libc++ -Wall -pthread
 endif
 	
-	@$(CXX) $(BUILDDIR)/*.o -shared -o $(BUILDDIR)/libEarl.so.$(EARL_MAJOR).$(EARL_MINOR)
+	# Move object files to build directory
+	@mv *.o $(BUILDDIR)
+	# Create shared library
+	@$(CXX) $(BUILDDIR)/*.o -shared -o $(LIB_OUT)
 	@rm $(BUILDDIR)/*.o
-	@echo '> Building test code...'
 
+	# > Build Test Code
+
+# Compile executable, using shared library
 ifeq ($(CXX),g++)
-	@$(CXX) -std=c++0x test.cpp $(BUILDDIR)/libEarl.so.$(EARL_MAJOR).$(EARL_MINOR) -Wall -lpthread -o$(BUILDDIR)/test-Earl
+	@$(CXX) -std=c++0x test.cpp $(LIB_OUT) -Wall -lpthread -o$(BUILDDIR)/test-Earl
 else
-	@$(CXX) -std=c++11 test.cpp $(BUILDDIR)/libEarl.so.$(EARL_MAJOR).$(EARL_MINOR) -stdlib=libc++ -Wall -pthread -o$(BUILDDIR)/test-Earl
+	@$(CXX) -std=c++11 test.cpp $(LIB_OUT) -stdlib=libc++ -Wall -pthread -o$(BUILDDIR)/test-Earl
 endif
-
-	@echo '> Complete!'
 
 test:
 	@echo '> Testing Earl...'
