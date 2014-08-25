@@ -7,6 +7,8 @@ before_install:
  - export ARTIFACTS=$(pwd)
  - if [ "$CXX" == "clang++" ]; then sudo add-apt-repository -y ppa:h-rayflood/llvm; fi
  - sudo apt-get update -qq
+ # Install Coveralls
+ - sudo pip install cpp-coveralls
 install:
  - if [ "$CXX" == "clang++" ]; then sudo apt-get install --allow-unauthenticated -qq clang-3.4; fi
  - if [ "$CXX" == "clang++" ]; then export CXXFLAGS="-std=c++0x -stdlib=libc++"; fi
@@ -24,3 +26,5 @@ os:
  - linux
  - osx
 script: make
+after_success:
+ - coveralls
