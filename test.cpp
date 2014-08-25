@@ -34,7 +34,17 @@
 
 using namespace Earl;
 
+#define TESTS_PASSED 12
+#define TESTS_FAILED 1
+#define TESTS_PENDING 1
+
 bool runTests(bool async, int threads) {
+	bool beforeTriggered, afterTriggered;
+	int beforeEachTriggerCount, afterEachTriggerCount;
+
+	beforeTriggered = afterTriggered = false;
+	beforeEachTriggerCount = afterEachTriggerCount = 0;
+	
 	if(async) {
 		std::cout << std::endl << "Running suite in asynchronous mode. (" << threads << " threads)" << std::endl;
 	} else {
@@ -46,9 +56,17 @@ bool runTests(bool async, int threads) {
 	Test::runAsynchronously(async);
 	Test::setMaxConcurrency(threads);
 
+	Test::beforeEach([&beforeEachTriggerCount]() {
+		beforeEachTriggerCount++;
+	});
+
+	Test::afterEach([&afterEachTriggerCount]() {
+		afterEachTriggerCount++;
+	});
+
 	// Run a suite of output tests (make sure
 	// Earl returns what we expect)
-	Test::describe("Earl Output Tests", []() {
+	Test::describe("Earl Output Tests", [&beforeTriggered, &afterTriggered]() {
 		
 		Test::it("Should pass a test", []() -> bool {
 			return (0 == 0);
@@ -69,6 +87,20 @@ bool runTests(bool async, int threads) {
 		});
 		
 		Test::it("Should store a pending test");
+
+		Test::before([&beforeTriggered]() {
+			Print::line("\t* Before Event Triggered", GREY);
+			beforeTriggered = true;	
+		});
+
+		Test::after([&afterTriggered]() {
+			Print::line("\t* After Event Triggered", GREY);
+			afterTriggered = true;
+		});
+
+		Test::it("Before and After Trigger", []() -> bool {
+			return true;
+		});
 	});
 
 	Test::describe("Earl Assertions API", []() {
@@ -161,7 +193,20 @@ bool runTests(bool async, int threads) {
 	// Run the suite of tests and return the
 	// truthiness of the results we expect
 	Test::runTests();
-	return (Test::getTestsPassed() == 11) && (Test::getTestsFailed() == 1) && (Test::getTestsPending() == 1);
+
+	Test::printSummary();
+	std::cout << "Before Event Triggered: " << beforeTriggered << std::endl;
+	std::cout << "After Event Triggered: " << afterTriggered << std::endl;
+	std::cout << "BeforeEach Event Triggered: " << beforeEachTriggerCount << "/" << (TESTS_PASSED + TESTS_FAILED) << std::endl;
+	std::cout << "AfterEach Event Triggered: " << afterEachTriggerCount << "/" << (TESTS_PASSED + TESTS_FAILED) << std::endl;
+
+	return 	(Test::getTestsPassed() == TESTS_PASSED) && 
+			(Test::getTestsFailed() == TESTS_FAILED) && 
+			(Test::getTestsPending() == TESTS_PENDING) &&
+			beforeTriggered &&
+			afterTriggered &&
+			(beforeEachTriggerCount == (TESTS_PASSED + TESTS_FAILED)) &&
+			(afterEachTriggerCount == (TESTS_PASSED + TESTS_FAILED));
 }
 
 int main() {

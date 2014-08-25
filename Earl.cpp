@@ -109,9 +109,10 @@ namespace Earl {
 		TestCase test { lambda, description, currentSuite, beforeList, afterList };
 #endif
 
+		beforeList.clear();
+		afterList.clear();
+
 		if(runAsync) {
-			beforeList.clear();
-			afterList.clear();
 			testList.push_back(test);
 		} else {
 			runTest(std::make_shared<TestCase>(test));

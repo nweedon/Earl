@@ -9,10 +9,15 @@ SRC=Earl.cpp EarlAssert.cpp EarlPrint.cpp
 LIB_OUT=$(BUILDDIR)/libEarl.so.$(EARL_MAJOR).$(EARL_MINOR)
 # Coverage arguments and flag
 COV_ARGS=-lgcov -coverage
+COV_ARGS_CLANG=-gcov -coverage
 COVERAGE=true
 
 ifeq ($(COVERAGE), true)
+ifeq ($(CXX), g++)
 	args=$(COV_ARGS)
+else
+	args=$(COV_ARGS_CLANG)
+endif
 else
 	args=
 endif
