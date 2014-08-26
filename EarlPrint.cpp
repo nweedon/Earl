@@ -32,6 +32,15 @@
 namespace Earl {
 	std::mutex Print::stdoutMutex;
 
+	/**
+	 * Print::base
+	 * -------------------
+	 * Base printing function. Will acquire lock to stdout, print,
+	 * then release the lock.
+	 * @param s - String to print
+	 * @param colour - An ansi colour code used to colour the output
+	 * @param flush - Flush output instead of ending the line
+	 */
 	void Print::base(std::string s, std::string colour, bool flush) {
 		std::lock_guard<std::mutex> g_stdout(stdoutMutex);
 		std::cout << colour << s << WHITE;
@@ -43,10 +52,24 @@ namespace Earl {
 		}
 	}
 
+	/**
+	 * Print::line
+	 * -------------------
+	 * Print a line of text.
+	 * @param s - String to print
+	 * @param colour - An ansi colour code used to colour the output
+	 */
 	void Print::line(std::string s, std::string colour) {
 		base(s, colour, false);
 	}
 
+	/**
+	 * Print::fragment
+	 * -------------------
+	 * Print some text. The line printed on is not terminated.
+	 * @param s - String to print
+	 * @param colour - An ansi colour code used to colour the output
+	 */
 	void Print::fragment(std::string s, std::string colour) {
 		base(s, colour, true);
 	}
