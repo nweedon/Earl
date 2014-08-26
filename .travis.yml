@@ -10,6 +10,7 @@ before_install:
  # Install Coveralls
  - sudo pip install cpp-coveralls
 install:
+ - chmod u+x install.sh
  - ./install.sh
 os: 
  - linux
