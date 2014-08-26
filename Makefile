@@ -9,15 +9,10 @@ SRC=Earl.cpp EarlAssert.cpp EarlPrint.cpp
 LIB_OUT=$(BUILDDIR)/libEarl.so.$(EARL_MAJOR).$(EARL_MINOR)
 # Coverage arguments and flag
 COV_ARGS=-lgcov -coverage
-COV_ARGS_CLANG=-gcov -coverage
 COVERAGE=true
 
 ifeq ($(COVERAGE), true)
-ifeq ($(CXX), g++)
 	args=$(COV_ARGS)
-else
-	args=$(COV_ARGS_CLANG)
-endif
 else
 	args=
 endif
@@ -33,16 +28,13 @@ build:
 # Compile object files
 ifeq ($(CXX),g++)
 	@$(CXX) -c $(SRC) -fPIC -std=c++0x -Wall -lpthread $(args)
+	@$(CXX) *.o -shared $(args) -o $(LIB_OUT)
 else
-	@$(CXX) -c $(SRC) -fPIC -std=c++11 -stdlib=libc++ -Wall -pthread $(args)
+	@$(CXX) -c $(SRC) -fPIC -std=c++11 -stdlib=libc++ -Wall -pthread
+	@$(CXX) *.o -shared -o $(LIB_OUT)
 endif
-	
-	# Move object files to build directory
-	@mv *.o $(BUILDDIR)
 
-	# Create shared library
-	@$(CXX) $(BUILDDIR)/*.o -shared $(args) -o $(LIB_OUT)
-	@rm $(BUILDDIR)/*.o
+	@rm *.o
 
 	# > Build Test Code
 
