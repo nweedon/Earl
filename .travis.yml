@@ -27,4 +27,4 @@ os:
  - osx
 script: make
 after_success:
- - coveralls
+ - if [ "$CXX" == "g++" ]; then coveralls; fi
