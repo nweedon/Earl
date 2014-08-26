@@ -28,6 +28,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/ 
 #include "Earl.h"
+#include "EarlPrint.h"
 #include <iostream>
 #include <string>
 #include <chrono>
@@ -200,13 +201,25 @@ bool runTests(bool async, int threads) {
 	std::cout << "BeforeEach Event Triggered: " << beforeEachTriggerCount << "/" << (TESTS_PASSED + TESTS_FAILED) << std::endl;
 	std::cout << "AfterEach Event Triggered: " << afterEachTriggerCount << "/" << (TESTS_PASSED + TESTS_FAILED) << std::endl;
 
-	return 	(Test::getTestsPassed() == TESTS_PASSED) && 
-			(Test::getTestsFailed() == TESTS_FAILED) && 
-			(Test::getTestsPending() == TESTS_PENDING) &&
-			beforeTriggered &&
-			afterTriggered &&
-			(beforeEachTriggerCount == (TESTS_PASSED + TESTS_FAILED)) &&
-			(afterEachTriggerCount == (TESTS_PASSED + TESTS_FAILED));
+	bool passed = 	(Test::getTestsPassed() == TESTS_PASSED) && 
+					(Test::getTestsFailed() == TESTS_FAILED) && 
+					(Test::getTestsPending() == TESTS_PENDING) &&
+					beforeTriggered &&
+					afterTriggered &&
+					(beforeEachTriggerCount == (TESTS_PASSED + TESTS_FAILED)) &&
+					(afterEachTriggerCount == (TESTS_PASSED + TESTS_FAILED));
+
+	if(passed) {
+		Print::line("---------------------", GREEN);
+		Print::line("Test section PASSED", GREEN);
+		Print::line("---------------------", GREEN);
+	} else {
+		Print::line("---------------------", RED);
+		Print::line("Test section FAILED", RED);
+		Print::line("---------------------", RED);
+	}
+
+	return passed;
 }
 
 int main() {
